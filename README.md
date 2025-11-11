@@ -1,4 +1,10 @@
-# Live Mic Audio Visualizer (Basic)
+<p align="center">
+  <img src="https://storage.googleapis.com/42zero-opensource-downloads/liv-mic-ico.png" alt="Live Mic Audio Visualizer Logo" width="128"/>
+</p>
+
+<h1 align="center">Live Mic Audio Visualizer</h1>
+
+
 <br>
 
 This project captures live microphone input and visualizes it in real-time. 
