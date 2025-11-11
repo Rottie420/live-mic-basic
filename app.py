@@ -1,7 +1,7 @@
 import sounddevice as sd
 import numpy as np
-import tkinter as tk
-from tkinter import ttk
+import os
+import customtkinter as ctk
 
 # === INITIAL CONFIG ===
 SAMPLE_RATE = 44100
@@ -9,10 +9,9 @@ BLOCK_SIZE = 1024
 GAIN = 1.0
 SMOOTHING = 0.05
 
-# Buffers
 smooth_buffer = np.zeros(BLOCK_SIZE)
 waveform_data = np.zeros(BLOCK_SIZE)
-stream = None  # initialized later
+stream = None
 
 # === AUDIO EFFECT ===
 def clean_effect(indata):
@@ -76,18 +75,13 @@ def update_visualizer():
     h = canvas.winfo_height()
     w = canvas.winfo_width()
 
-    # === Modern Grid ===
     grid_color = "#2A2A2A"
-    # Vertical lines (every 50 px)
     for x in range(0, w, 50):
         canvas.create_line(x, 0, x, h, fill=grid_color, width=1, tags="grid")
-    # Horizontal lines (every 25 px)
     for y in range(0, h, 25):
         canvas.create_line(0, y, w, y, fill=grid_color, width=1, tags="grid")
-    # Center line (0 axis)
     canvas.create_line(0, h/2, w, h/2, fill="#444", width=1, tags="grid")
 
-    # === Waveform ===
     if waveform_data is not None and len(waveform_data) > 0:
         step = max(1, len(waveform_data) // w)
         for i in range(0, len(waveform_data) - step, step):
@@ -95,49 +89,46 @@ def update_visualizer():
             y0 = h / 2 - waveform_data[i] * h / 2
             x1 = (i + step) / len(waveform_data) * w
             y1 = h / 2 - waveform_data[i + step] * h / 2
-            canvas.create_line(x0, y0, x1, y1, fill="cyan", width=1, tags="wave")
+            canvas.create_line(x0, y0, x1, y1, fill="#00D5D2", width=1, tags="wave")
 
     root.after(30, update_visualizer)
 
 # === GUI ===
-root = tk.Tk()
-root.title("Live Mic (Basic)")
-root.configure(bg="#F0F0F0")
+ctk.set_appearance_mode("dark")
+
+root = ctk.CTk()
+icon_path = os.path.join(os.getcwd(), "liv-mic.ico")
+root.iconbitmap(icon_path)
+root.title("Live Mic Visualizer")
+root.geometry("420x420")  # 👈 narrower window width
 root.resizable(False, False)
 
-canvas = tk.Canvas(root, bg="#1E1E1E", height=150)
-canvas.pack(fill="x", padx=20, pady=15)
+canvas = ctk.CTkCanvas(root, bg="#1E1E1E", height=130, highlightthickness=0)
+canvas.pack(fill="x", padx=15, pady=10)
 
-frame = ttk.Frame(root, padding=20)
-frame.pack()
+# === CONTROL PANEL ===
+control_frame = ctk.CTkFrame(root, fg_color="#252526", corner_radius=10)
+control_frame.pack(pady=8, padx=15, fill="x")
 
-# Gain
-ttk.Label(frame, text="Gain").grid(row=0, column=0, padx=10)
-gain_slider = ttk.Scale(frame, from_=5.0, to=0.1, orient="vertical", command=update_gain, length=150)
-gain_slider.set(GAIN)
-gain_slider.grid(row=1, column=0, padx=10)
+def add_slider(parent, label, from_, to, val, command):
+    frame = ctk.CTkFrame(parent, fg_color="transparent")
+    frame.pack(side="left", expand=True, fill="both", padx=6)
+    ctk.CTkLabel(frame, text=label, anchor="center", width=70).pack(pady=(8, 5))
+    slider = ctk.CTkSlider(frame, from_=from_, to=to, orientation="vertical",
+                           command=command, width=16, height=130, number_of_steps=100)
+    slider.set(val)
+    slider.pack(pady=(0, 10))
+    return slider
 
-# Smoothing
-ttk.Label(frame, text="Smoothing").grid(row=0, column=1, padx=10)
-smooth_slider = ttk.Scale(frame, from_=0.5, to=0.01, orient="vertical", command=update_smoothing, length=150)
-smooth_slider.set(SMOOTHING)
-smooth_slider.grid(row=1, column=1, padx=10)
+gain_slider = add_slider(control_frame, "Gain", 0.1, 5.0, GAIN, update_gain)
+smooth_slider = add_slider(control_frame, "Smooth", 0.01, 0.5, SMOOTHING, update_smoothing)
+sr_slider = add_slider(control_frame, "Rate", 8000, 96000, SAMPLE_RATE, update_sample_rate)
+bs_slider = add_slider(control_frame, "Size", 128, 4096, BLOCK_SIZE, update_block_size)
 
-# Sample Rate
-ttk.Label(frame, text="Sample Rate").grid(row=0, column=2, padx=10)
-sr_slider = ttk.Scale(frame, from_=96000, to=8000, orient="vertical", command=update_sample_rate, length=150)
-sr_slider.set(SAMPLE_RATE)
-sr_slider.grid(row=1, column=2, padx=10)
-
-# Block Size
-ttk.Label(frame, text="Block Size").grid(row=0, column=3, padx=10)
-bs_slider = ttk.Scale(frame, from_=4096, to=128, orient="vertical", command=update_block_size, length=150)
-bs_slider.set(BLOCK_SIZE)
-bs_slider.grid(row=1, column=3, padx=10)
-
-# Stop
-stop_button = ttk.Button(frame, text="Stop Stream", command=lambda: (stream.stop(), root.destroy()))
-stop_button.grid(row=2, column=0, columnspan=4, pady=20)
+stop_button = ctk.CTkButton(root, text="Stop Stream", fg_color="#1F6AA5",
+                            hover_color="#257EC4", width=120,
+                            command=lambda: (stream.stop(), root.destroy()))
+stop_button.pack(pady=12)
 
 # === START ===
 start_stream()
