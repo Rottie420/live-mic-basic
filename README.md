@@ -1,9 +1,13 @@
 <p align="center">
-  <img src="https://storage.googleapis.com/42zero-opensource-downloads/liv-mic-ico.png" alt="Live Mic Audio Visualizer Logo" width="128"/>
+  <img src="liv-mic.ico" alt="Live Mic Audio Visualizer Logo" width="128"/>
 </p>
 
-<h1 align="center">Live Mic Audio Visualizer</h1>
-
+<div align="center">
+  <h1>Live Mic Audio Visualizer</h1>
+  <a><img src="https://img.shields.io/badge/Python-3.9-blue"></a>
+  <a><img src="https://img.shields.io/badge/Windows-11-green"></a>
+  <a ><img src="https://img.shields.io/badge/Version-1.2-orange"></a>
+</div>
 
 <br>
 
@@ -13,12 +17,17 @@ It includes:
 - Real-time microphone input with `sounddevice`
 - Adjustable audio effects: **Gain**, **Smoothing**, **Sample Rate**, **Block Size**
 - Real-time waveform visualizer
-- Simple Tkinter GUI with sliders and stop button
+- Simple CustomTkinter GUI with sliders and stop button
 - Smooth audio output with clipping prevention
 
 <br>
 
-## Setup Instructions
+### ⬇️ Download Link (windows):
+https://storage.googleapis.com/42zero-opensource-downloads/LiveMicSetup.zip
+
+<br>
+
+## ⚙️ Setup Instructions
 
 ### Clone and Prepare
 ```bash
@@ -38,7 +47,13 @@ pip install -r requirements.txt
 
 <br>
 
-### GUI Details
+### 💻 GUI Details
+
+<br>
+
+<p align="center">
+  <img src="live-mic-gui-v1.2.png" alt="Live Mic Audio Visualizer Gui"/>
+</p>
 
 <br>
 
@@ -49,7 +64,7 @@ pip install -r requirements.txt
   - Smoothing — smooth the audio signal
   - Sample Rate — adjust microphone sampling rate
   - Block Size — change buffer size for audio processing
-  - Stop Button: Stops the audio stream and closes the app
+  - Stop Stream: Stops the audio stream and closes the app
 
 <br>
 
@@ -90,5 +105,7 @@ Click Stop Stream to exit the application
   - The waveform updates every 30 ms for smooth visualization.
   - Gain and smoothing can be adjusted for different audio effects.
   - Ensure your microphone is connected and accessible by the system.
+
+⚠️ Make sure your usb mic is connected and ON
 
 <br> <br> <br>
