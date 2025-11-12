@@ -67,7 +67,7 @@ def update_block_size(val):
     smooth_buffer = np.zeros(BLOCK_SIZE)
     restart_stream()
 
-# === VISUALIZER ===
+# === VISUALIZER (Studio Style) ===
 def update_visualizer():
     canvas.delete("wave")
     canvas.delete("grid")
@@ -75,23 +75,55 @@ def update_visualizer():
     h = canvas.winfo_height()
     w = canvas.winfo_width()
 
-    grid_color = "#2A2A2A"
+    # === Background Grid ===
+    grid_color = "#252525"
     for x in range(0, w, 50):
         canvas.create_line(x, 0, x, h, fill=grid_color, width=1, tags="grid")
     for y in range(0, h, 25):
         canvas.create_line(0, y, w, y, fill=grid_color, width=1, tags="grid")
     canvas.create_line(0, h/2, w, h/2, fill="#444", width=1, tags="grid")
 
+    # === Smooth Waveform ===
     if waveform_data is not None and len(waveform_data) > 0:
-        step = max(1, len(waveform_data) // w)
-        for i in range(0, len(waveform_data) - step, step):
-            x0 = i / len(waveform_data) * w
-            y0 = h / 2 - waveform_data[i] * h / 2
-            x1 = (i + step) / len(waveform_data) * w
-            y1 = h / 2 - waveform_data[i + step] * h / 2
-            canvas.create_line(x0, y0, x1, y1, fill="#00D5D2", width=1, tags="wave")
+        # Apply moving average smoothing for visual fluidity
+        smooth_window = 6
+        smoothed = np.convolve(waveform_data, np.ones(smooth_window)/smooth_window, mode='same')
 
-    root.after(30, update_visualizer)
+        # Scale waveform to canvas width
+        step = max(1, len(smoothed) // w)
+        for i in range(0, len(smoothed) - step, step):
+            x0 = i / len(smoothed) * w
+            y0 = h / 2 - smoothed[i] * h / 2
+            x1 = (i + step) / len(smoothed) * w
+            y1 = h / 2 - smoothed[i + step] * h / 2
+
+            amp = abs(smoothed[i])
+            if amp < 0.7:
+                color = "#00FFFF"   # Cyan: normal range
+                width = 1
+            elif amp < 0.9:
+                color = "#00FF88"   # Green: loud but safe
+                width = 1.5
+            else:
+                color = "#FF4444"   # Red: clipping
+                width = 2
+
+            canvas.create_line(x0, y0, x1, y1, fill=color, width=width, tags="wave")
+
+        # === RMS Loudness Overlay ===
+        rms = np.sqrt(np.mean(smoothed**2))
+        rms_height = rms * h / 2
+        canvas.create_line(
+            0, h/2 - rms_height, w, h/2 - rms_height,
+            fill="#888", width=1, dash=(2,4), tags="wave"
+        )
+        canvas.create_line(
+            0, h/2 + rms_height, w, h/2 + rms_height,
+            fill="#888", width=1, dash=(2,4), tags="wave"
+        )
+
+    # Refresh every ~33 ms (~30 FPS)
+    root.after(33, update_visualizer)
 
 # === GUI ===
 ctk.set_appearance_mode("dark")
