@@ -52,7 +52,7 @@ pip install -r requirements.txt
 <br>
 
 <p align="center">
-  <img src="live-mic-gui-v1.2.png" alt="Live Mic Audio Visualizer Gui"/>
+  <img src="screenshot-v1.3.png" alt="Live Mic Audio Visualizer Gui"/>
 </p>
 
 <br>
@@ -98,14 +98,24 @@ Click Stop Stream to exit the application
 
 <br>
 
-### Notes
+### Changelogs
 
 <br>
 
+  v1.1
   - The waveform updates every 30 ms for smooth visualization.
   - Gain and smoothing can be adjusted for different audio effects.
   - Ensure your microphone is connected and accessible by the system.
+  - Make sure your usb mic is connected and ON
 
-⚠️ Make sure your usb mic is connected and ON
+  v1.2
+  - Change UI to dark theme using Customtikinter.
+
+  v1.3
+  - Display input device status and errors on visualizer canvas.
+  - Start audio stream with selected input device (recommended by u/IamMeAsGod).
+  - Handle stream errors and display status/messages on visualizer.  
+  - Stop and restart stream on parameter or device change. 
+  - app is fully working even usb mic is not connected and OFF.
 
 <br> <br> <br>
