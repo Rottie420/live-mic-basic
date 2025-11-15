@@ -126,7 +126,7 @@ Click Stop Stream to exit the application
     https://42zero.org/beyond-the-mic-exploring-the-tools-and-tech-powering-todays-beatbox-scene/
   </a>
   
-  <a href="https://42zero.org/ghost/#/editor/post/69152a1c5ad119006978fc83" target="_blank">
+  <a href="https://42zero.org/beyond-the-mic-exploring-the-tools-and-tech-powering-todays-beatbox-scene/" target="_blank">
     <img src="https://42zero.org/content/images/size/w1200/2025/11/bart-live-mic-audio-visualizer1.webp" width="500"/>
   </a>
 </p>
